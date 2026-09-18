@@ -1,0 +1,37 @@
+<mat-sidenav-container class="layout-container">
+  <mat-sidenav #drawer [opened]="drawerOpen()" mode="side" class="drawer">
+    <div class="drawer-header">
+      <mat-icon>school</mat-icon>
+      <span>SMS</span>
+    </div>
+    <mat-nav-list>
+      @for (item of visibleItems(); track item.path) {
+        <a mat-list-item [routerLink]="item.path" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="toolbar">
+      <button mat-icon-button (click)="toggleDrawer()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>School Management System</span>
+      <span class="spacer"></span>
+      @if (username()) {
+        <span class="user-chip">{{ username() }} ({{ role() }})</span>
+      }
+      <app-notification-bell />
+      <button mat-icon-button matTooltip="Logout" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

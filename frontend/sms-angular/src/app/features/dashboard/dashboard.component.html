@@ -1,0 +1,114 @@
+<h1>Dashboard</h1>
+
+@if (role() === 'Admin' && admin(); as d) {
+  <div class="stat-grid">
+    <mat-card class="stat cursor-pointer" (click)="go('/admin/students')">
+      <mat-card-content>
+        <div class="stat-value primary">{{ d.totalStudents }}</div>
+        <div class="stat-label">Total Students</div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat cursor-pointer" (click)="go('/admin/teachers')">
+      <mat-card-content>
+        <div class="stat-value accent">{{ d.totalTeachers }}</div>
+        <div class="stat-label">Total Teachers</div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat cursor-pointer" (click)="go('/admin/classes')">
+      <mat-card-content>
+        <div class="stat-value info">{{ d.totalClasses }}</div>
+        <div class="stat-label">Total Classes</div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat cursor-pointer" (click)="go('/admin/attendance')">
+      <mat-card-content>
+        <div class="stat-value warn">{{ d.absencesToday }}</div>
+        <div class="stat-label">Absences Today</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <h2>Recent Announcements</h2>
+  <mat-nav-list>
+    @for (a of d.recentAnnouncements; track a.id) {
+      <a mat-list-item (click)="go('/announcements/' + a.id)">
+        <span matListItemTitle [style.fontWeight]="a.isRead ? 400 : 600">{{ a.title }}</span>
+        <span matListItemLine>{{ a.createdAt | date:'short' }}</span>
+      </a>
+    }
+  </mat-nav-list>
+}
+
+@if (role() === 'Teacher' && teacher(); as d) {
+  <div class="stat-grid">
+    <mat-card class="stat cursor-pointer" (click)="go('/teacher/my-class')">
+      <mat-card-content>
+        <div class="stat-value primary">{{ d.classStudentCount }}</div>
+        <div class="stat-label">Students in My Class</div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat cursor-pointer" (click)="go('/teacher/attendance')">
+      <mat-card-content>
+        <div class="stat-value warn">{{ d.absencesTodayInClass }}</div>
+        <div class="stat-label">Absences Today</div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat cursor-pointer" (click)="go('/announcements')">
+      <mat-card-content>
+        <div class="stat-value info">{{ d.unreadAnnouncements }}</div>
+        <div class="stat-label">Unread Announcements</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <h2>Upcoming Exams</h2>
+  <table mat-table [dataSource]="d.upcomingExams" class="mat-elevation-z1">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Exam</th>
+      <td mat-cell *matCellDef="let e">{{ e.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="subject">
+      <th mat-header-cell *matHeaderCellDef>Subject</th>
+      <td mat-cell *matCellDef="let e">{{ e.subjectName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <td mat-cell *matCellDef="let e">{{ e.examDate }}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['name','subject','date']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['name','subject','date']"></tr>
+  </table>
+}
+
+@if (role() === 'Student' && student(); as d) {
+  <div class="stat-grid">
+    <mat-card class="stat cursor-pointer" (click)="go('/student/attendance')">
+      <mat-card-content>
+        <div class="stat-value warn">{{ d.totalAbsencesThisYear }}</div>
+        <div class="stat-label">Total Absences</div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat cursor-pointer" (click)="go('/student/grades')">
+      <mat-card-content>
+        <div class="stat-value primary">{{ d.gpa | number:'1.2-2' }}</div>
+        <div class="stat-label">GPA</div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat cursor-pointer" (click)="go('/announcements')">
+      <mat-card-content>
+        <div class="stat-value info">{{ d.unreadAnnouncements }}</div>
+        <div class="stat-label">Unread Announcements</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (d.nextExam; as ex) {
+    <h2>Next Exam</h2>
+    <mat-card>
+      <mat-card-content>
+        <div>{{ ex.name }} — {{ ex.subjectName }}</div>
+        <div class="hint">Date: {{ ex.examDate }}</div>
+      </mat-card-content>
+    </mat-card>
+  }
+}
